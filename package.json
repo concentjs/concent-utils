@@ -1,0 +1,66 @@
+{
+  "author": {
+    "name": "fantasticsoul",
+    "email": "624313307@qq.com",
+    "url": "https://github.com/fantasticsoul"
+  },
+  "browserify": {
+    "transform": [
+      "loose-envify"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/concentjs/concent/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Utils for helping concent make common functions in ts project",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "concent": "^2.12.6",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.2.1",
+    "rollup": "^2.38.0",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript": "^1.0.1",
+    "typescript": "^4.1.2"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src"
+  ],
+  "homepage": "https://github.com/concentjs/concent#readme",
+  "keywords": [
+    "concent",
+    "concent-utils",
+    "react"
+  ],
+  "license": "MIT",
+  "name": "concent-utils",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "unpkg": "lib/concent-utils.min.js",
+  "npmName": "concent-utils",
+  "peerDependencies": {
+    "concent": "^2.12.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/concentjs/concent-utils.git"
+  },
+  "scripts": {
+    "build": "tsc & rollup -c",
+    "dev": "tsc --watch",
+    "lint": "eslint ./src --fix --ext js,ts,tsx"
+  },
+  "version": "1.0.0"
+}
