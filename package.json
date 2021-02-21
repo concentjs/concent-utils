@@ -47,7 +47,6 @@
   "license": "MIT",
   "name": "concent-utils",
   "main": "lib/concent-utils.min.js",
-  "module": "src/index.ts",
   "types": "lib/index.d.ts",
   "unpkg": "lib/concent-utils.min.js",
   "npmName": "concent-utils",
@@ -63,5 +62,5 @@
     "dev": "tsc --watch",
     "lint": "eslint ./src --fix --ext js,ts,tsx"
   },
-  "version": "1.0.3"
+  "version": "1.1.0"
 }
