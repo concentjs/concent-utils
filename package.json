@@ -51,7 +51,7 @@
   "unpkg": "lib/concent-utils.min.js",
   "npmName": "concent-utils",
   "peerDependencies": {
-    "concent": "^2.14.1"
+    "concent": "^2.14.8"
   },
   "repository": {
     "type": "git",
@@ -62,5 +62,5 @@
     "dev": "tsc --watch",
     "lint": "eslint ./src --fix --ext js,ts,tsx"
   },
-  "version": "1.2.3"
+  "version": "1.2.6"
 }

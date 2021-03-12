@@ -4,16 +4,10 @@
 .coveralls.yml
 
 coverage
-
 node_modules
 dist
 lib
 es/*
 
-TODO.md
 TIPME.md
-ATTENTION.md
 
-articles
-type-work
-tmp-file

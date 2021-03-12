@@ -5,7 +5,7 @@ import {
   useConcent, IRefCtxM, ModuleDesc,
   ReducerCallerParams, IReducerFn, IActionCtxBase,
   ICtxBase, IAnyObj, SettingsType, ComputedValType, ComputedValTypeForFn,
-  MultiComputedFn, MultiComputed, StateType,
+  MultiComputedFn, MultiComputed,
 } from 'concent';
 
 /**
@@ -102,7 +102,8 @@ export function makeUseModelWithSetup<RootInfo, ModelDesc extends ModuleDesc>(mo
    *  useModelWithSetup(setup, { extra, props, ceDesc });
    */
   return function useModelWithSetup<
-    Setup extends SetupParam, CuDesc extends MultiComputed<StateType<ModuleDesc['state']>>, P extends IAnyObj, Extra extends IAnyObj,
+    // 同 [?-1]
+    Setup extends SetupParam, CuDesc extends MultiComputed<any>, P extends IAnyObj, Extra extends IAnyObj,
     >(setup: Setup, opts?: Opts<CuDesc, P, Extra>) {
     const { cuDesc, props, extra, passCuDesc = true, ccClassKey, tag } = opts || {};
     const targetProps = (props || {}) as P;
@@ -134,7 +135,10 @@ export function makeUseModelWithSetupCuf<RootInfo, ModelDesc extends ModuleDesc>
    *  makeUseModelWithSetupCuf(setup, { extra, props, ceDesc });
    */
   return function useModelWithSetupCuf<
-    Setup extends SetupParam, CuDesc extends MultiComputedFn<StateType<ModuleDesc['state']>>, P extends IAnyObj, Extra extends IAnyObj,
+    // [?-1]
+    // 暂时不用 MultiComputedFn<StateType<ModuleDesc['state']>> 写法
+    // 目前这里 ts 直接提前推导出类型了，而不是等待用户传递了泛型后再推，猜测可能是 ts bug？
+    Setup extends SetupParam, CuDesc extends MultiComputedFn<any>, P extends IAnyObj, Extra extends IAnyObj,
     >(setup: Setup, opts?: CufOpts<CuDesc, P, Extra>) {
     const { cuDesc, props, extra, passCuDesc = true, ccClassKey, tag } = opts || {};
     const targetProps = (props || {}) as P;
