@@ -5,7 +5,7 @@ import {
   useConcent, IRefCtxM, ModuleDesc,
   ReducerCallerParams, IReducerFn, IActionCtxBase,
   ICtxBase, IAnyObj, SettingsType, ComputedValType, ComputedValTypeForFn,
-  MultiComputedFn, MultiComputed,
+  MultiComputedFn, MultiComputed, StateType,
 } from 'concent';
 
 /**
@@ -48,9 +48,15 @@ export interface BaseOpts<P extends IAnyObj, Extra extends IAnyObj> {
    * 否则 refComputed 里拿不到真正的计算结果
    */
   passCuDesc?: boolean;
+  /**
+   * 用于辅助定位 ccc.refs 或者 cc.getRefs 具体ref
+   */
+  tag?: string;
+  ccClassKey?: string;
+  moduleName?: string;
 }
 
-export interface Opts<CuDesc extends MultiComputed, P extends IAnyObj, Extra extends IAnyObj>
+export interface Opts<CuDesc extends MultiComputed<any>, P extends IAnyObj, Extra extends IAnyObj>
   extends BaseOpts<P, Extra> {
   /**
    * 对象型计算函数描述体
@@ -61,7 +67,7 @@ export interface Opts<CuDesc extends MultiComputed, P extends IAnyObj, Extra ext
    */
   cuDesc?: CuDesc;
 }
-export interface CufOpts<CuDesc extends MultiComputedFn, P extends IAnyObj, Extra extends IAnyObj>
+export interface CufOpts<CuDesc extends MultiComputedFn<any>, P extends IAnyObj, Extra extends IAnyObj>
   extends BaseOpts<P, Extra> {
   /**
    * 函数型计算函数描述体, 通常用于脱离了setup函数体内时，需要拿到渲染上下文句柄做一些其他事情
@@ -78,38 +84,67 @@ export interface CufOpts<CuDesc extends MultiComputedFn, P extends IAnyObj, Extr
 }
 
 export type ValidSetup = (ctx: ICtxBase) => IAnyObj | void;
-export type StepParam = ValidSetup | null;
+export type SetupParam = ValidSetup | null;
 
 const noop = () => ({});
 
+/**
+ * 普通对象型 cuSpec 用此函数来推导类型
+ * @param moduleName 
+ */
 export function makeUseModelWithSetup<RootInfo, ModelDesc extends ModuleDesc>(moduleName: string) {
+
+  /**
+   *  const ceDesc = {a:()=>1, b:()=>2};
+   *  function setup(ctx:CtrPre){ }
+   * 
+   *  useModelWithSetup(setup);
+   *  useModelWithSetup(setup, { extra, props, ceDesc });
+   */
   return function useModelWithSetup<
-    Setup extends StepParam, CuDesc extends MultiComputed, P extends IAnyObj, Extra extends IAnyObj,
+    Setup extends SetupParam, CuDesc extends MultiComputed<StateType<ModuleDesc['state']>>, P extends IAnyObj, Extra extends IAnyObj,
     >(setup: Setup, opts?: Opts<CuDesc, P, Extra>) {
-    const { cuDesc, props, extra, passCuDesc = true } = opts || {};
+    const { cuDesc, props, extra, passCuDesc = true, ccClassKey, tag } = opts || {};
     const targetProps = (props || {}) as P;
     const targetCuDesc = passCuDesc ? cuDesc : null;
     const targetSetup = (setup || noop) as ValidSetup;
 
     type Ctx = IRefCtxM<RootInfo, P, ModelDesc, SettingsType<Setup>, ComputedValType<CuDesc>, Extra>;
-    return useConcent<P, Ctx>({ module: moduleName, setup: targetSetup, props: targetProps, extra, cuDesc: targetCuDesc });
+    return useConcent<P, Ctx>(
+      { module: moduleName, tag, setup: targetSetup, props: targetProps, extra, cuDesc: targetCuDesc }
+      , ccClassKey,
+    );
   }
 }
 
 /**
- * 函数型 cuSpec 需要用此函数来推导类型
+ * 函数型 cuSpec 用此函数来推导类型
  * @param moduleName
  */
 export function makeUseModelWithSetupCuf<RootInfo, ModelDesc extends ModuleDesc>(moduleName: string) {
+
+  /**
+   *  const ceDesc = (ctx:CtrPre)=>{
+   *    return {a:()=>1, b:()=>2};
+   *  }
+   *  
+   *  function setup(ctx:CtrPre){ }
+   * 
+   *  makeUseModelWithSetupCuf(setup);
+   *  makeUseModelWithSetupCuf(setup, { extra, props, ceDesc });
+   */
   return function useModelWithSetupCuf<
-    Setup extends StepParam, CuDesc extends MultiComputedFn, P extends IAnyObj, Extra extends IAnyObj,
+    Setup extends SetupParam, CuDesc extends MultiComputedFn<StateType<ModuleDesc['state']>>, P extends IAnyObj, Extra extends IAnyObj,
     >(setup: Setup, opts?: CufOpts<CuDesc, P, Extra>) {
-    const { cuDesc, props, extra, passCuDesc = true } = opts || {};
+    const { cuDesc, props, extra, passCuDesc = true, ccClassKey, tag } = opts || {};
     const targetProps = (props || {}) as P;
     const targetCuDesc = passCuDesc ? cuDesc : null;
     const targetSetup = (setup || noop) as ValidSetup;
 
     type Ctx = IRefCtxM<RootInfo, P, ModelDesc, SettingsType<Setup>, ComputedValTypeForFn<CuDesc>, Extra>;
-    return useConcent<P, Ctx>({ module: moduleName, setup: targetSetup, props: targetProps, extra, cuDesc: targetCuDesc });
+    return useConcent<P, Ctx>(
+      { module: moduleName, tag, setup: targetSetup, props: targetProps, extra, cuDesc: targetCuDesc },
+      ccClassKey,
+    );
   }
 }
